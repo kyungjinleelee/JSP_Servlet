@@ -74,3 +74,52 @@ commit;
 
 11. list.jsp 작성
     - BoardListServlet 에서 scope에 저장된 데이터를 얻어서 화면에 출력
+##############################################
+글쓰기 ( 글쓰기 화면보기 --> 글쓰기 )
+
+가. 글쓰기 화면보기
+브라우저  -----------> BoardWriteUIServlet
+                           |
+      <-----------      write.jsp
+
+
+나.  글쓰기
+                                         BoardService
+브라우저 --------> BoardWriteServlet <---> BoardServiceImpl <--> BoardDAO <---> DB
+                      |
+      <-----------  BoardListServlet(o)   list.jsp (X)
+
+ * post 요청에 대한 한글처리는 필터 이용 ==> request.setCharacterEncodig("utf-8");
+
+##############################################
+글자세히 보기 + 조회수 증가
+                                           BoardService
+브라우저 --------> BoardRetrieveServlet <---> BoardServiceImpl <--> BoardDAO <---> DB
+                      |
+      <-----------  retrieve.jsp 
+
+##############################################
+글 수정
+
+                                           BoardService
+브라우저 --------> BoardUpdateServlet <---> BoardServiceImpl <--> BoardDAO <---> DB
+                      |
+      <-----------   BoardListServlet(o) 
+
+##############################################
+글 삭제
+
+                                           BoardService
+브라우저 --------> BoardDeleteServlet <---> BoardServiceImpl <--> BoardDAO <---> DB
+                      |
+      <-----------   BoardListServlet(o) 
+
+##############################################
+글 검색
+
+브라우저 -----------> BoardListServlet ----> BoardServiceImpl ----> BoardDAO --> 오라클
+                                    <--                    <--            <--  
+				     (7)                   (6)           (5)
+                         | ( 8)요청위임)
+      <----------    list.jsp
+         9)
