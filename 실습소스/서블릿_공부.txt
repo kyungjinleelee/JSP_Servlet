@@ -1057,3 +1057,128 @@ JSP ( Java Server Page )
    나.  isErrorPage="true" 지정하면 예외처리할 수 있는 exception 내장변수가 추가된다.
 
 ###########################################################################
+
+JSP에서 사용가능한 태그
+1.html
+2.jsp 태그
+   <%@ page %>, <%@ include %> ,<%@ taglib %> 
+   <%! %>
+   <% %>
+   <%= %>
+3. EL ( Expression Language )
+4. JSTL
+##############################################################################
+EL ( Expression Language )
+
+가. 문법
+   ${표현식} ==> 표현식에 사용할 수 있는 것은 10(실제값) 또는 변수(scope에 setAttribue에서 사용된key값)
+   예> ${10}
+      ${10+3} //산술연산
+      ${10>3} //비교연산
+      ${10>3 && 4==3} //논리연산( &&, ||, ! )
+
+나. 동작: 브라우저에 출력된다.   
+다. 주요한 기능 (**********************)
+   - 서블릿에서 scope에 저장된 데이터를 웹 브라우저에서 매우 편리하게 출력할 수 있다.
+     서블릿 작업
+       request.setAttribute("userid","홍길동");
+     jsp 작업
+      <%
+         String userid = (String)request.getAttribute("userid");
+      %>
+      <%= userid %>
+
+      ==> 한번에 EL로 표기가 가능하다. ${userid}  ${scope에저장된key값}
+
+   - null값을 비어있는 값으로 처리한다. ==> NullPointerException 발생 안됨.
+   - null 여부 확인 방법 ${empty kkk}
+   - ${key}는 기본적으로 request scope에서 가져온다.
+          ${requestScope.key} 는 ${key}와 동일
+          ${sessionScope.key} 는 session scope에서 값을 가져온다.
+          ${applicationScope.key} 는 application scope에서 값을 가져온다.
+  
+   - DTO 저장한 경우에는 ${key.변수명} 형식을 사용한다.
+   - list 저장한 경우에는 ${key[idx].변수명} 형식을 사용한다.
+
+   ==> 주요한 특징은  조건 및 반복 처리 못함.
+     해결: JSTL
+##############################################################################
+JSTL ( Jsp Standard Tag Library )
+1. 개요: 사용자 태그(커스텀 태그) 사용이 가능하다.
+     예> <person></person>
+
+2. 자바의 웹 개발자가 실제로 jsp에서 필요한 사용자 태그를 만들어서 제공하고
+   그것을 사용하는 방법에 촛점을 맞춘다.
+
+3. 누가 제공?  아파치(apache)에서 무료로 제공.
+
+4. 사용 방법
+ 
+   가. apache 사이트에서 가서 필요한 jar 파일 다운로드후 압축 풀기
+    http://jakarta.apache.org
+
+   나. 압축푼 lib폴더의 2개의 jar 파일을  WEB-INF/lib 폴더에 복사하기
+      - jstl.jar
+      - standard.jar
+
+   다. 압축푼 폴더에서 standard-examples.war 찾아서 이클립스에서 import 한다.
+   라. import 한 프로젝트에서 index.html 요청한다.
+   마. 일반적으로 EL와 같이 사용된다. 
+
+5. Core 라이브러리
+   <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+  가. 브라우저에 값출력
+    ${scope에저장된key값}
+    <c:out value="${scope에저장된key값}" />
+
+  나. 변수 사용
+    <c:set var="변수명"   value="${scope에저장된key값}" scope="request|session|application"/>
+    ${변수명}
+ 
+  다. 조건 ( 단일 if 문 )
+   <c:if test="${조건식}">
+      문장
+   </c>
+    조건 ( choose 문 )
+   <c:choose>
+	   <c:when test="${조건식}">
+	      문장
+	   </c>
+	   <c:when test="${조건식}">
+	      문장
+	   </c>
+	   <c:otherwise></c:otherwise>
+   </c:choose>
+
+  라. 반복문
+    
+    1) range
+
+      <c:foreach  var="변수명"  begin="시작값" end="끝값">
+          ${변수명} 문장
+      </c:foreach>
+  
+    2) scope에 저장된 데이터 반복
+        <h2>2. List 반복(****)</h2>
+	<c:forEach var="dto"  items="${list}">
+	   ${dto.userid}&nbsp;${dto.passwd}<br>
+	</c:forEach>
+	<h2>2. List 반복2- idx 얻기</h2>
+	<c:forEach var="dto"  items="${list}" varStatus="status">
+	   ${status.index},${status.count},${status.first}
+	   , ${status.last},${dto.userid}<br>
+	</c:forEach>
+
+
+  마. url (*************)
+    이전 경로:
+      <a href="JSTLServlet">상대경로</a>
+      <a href="/컨텍스트명/JSTLServlet">절대경로</a>
+
+    - <c:url value="경로" />
+      절대경로 가능. /만 붙여주면 자동으로 컨텍스트명을 추가해준다.
+      상대경로 가능.
+
+ 
+
