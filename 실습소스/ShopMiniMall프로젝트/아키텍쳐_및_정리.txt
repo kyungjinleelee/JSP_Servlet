@@ -1,0 +1,153 @@
+ShopMiniMall 프로젝트 아키텍쳐 및 기억해야할 것들 위주로 정리
+
+1. DB에 shop 계정 생성
+  -- 관리자
+  create user shop
+  identified by shop;
+
+  grant resource, connect
+  to shop;
+
+ 나중에 shop 계정에서 필요한 테이블 생성한다.
+
+2. 웹 프로젝트 생성 ( ShopMiniMall)
+
+3. 메인화면
+
+ 브라우저 -------->MainServlet (/main)
+                    |
+                 main.jsp
+
+
+4. 회원가입화면 보기
+
+브라우저 -------->MemberUIServlet (/MemberUIServlet)
+                    |
+                 memberForm.jsp
+
+ 5. member 테이블 작성
+
+   -- shop 계정
+   create table member
+   ( userid varchar2(20) CONSTRAINT member_userid_pk PRIMARY KEY,
+     passwd varchar2(20) not null,
+     username varchar2(20) not null,
+     post varchar2(6) not null,
+     addr1 varchar2(500) not null,
+     addr2 varchar2(500) not null,
+     phone1 varchar2(3) not null,
+     phone2 varchar2(4) not null,
+     phone3 varchar2(4) not null,
+     email1 varchar2(20) not null,
+     email2 varchar2(20) not null
+    );
+
+6. 아이디 중복 검사 ( Ajax ==> 화면갱신 안됨 )
+   ##############################
+     가. 4개의 jar WEB-INF/lib 폴더에 복사
+          -ojdbc6_g.jar, mybatis.jar, jstl.jar, standard.jar
+     나. com.dto.MemberDTO.java
+     다. jdbc.properties
+        Configuration.xml
+        MemberMapper.xml
+	MySqlSessionFactory.java
+
+
+    ##############################
+               (/MemberIdCheckServlet)      MemberService
+브라우저 -------->MemberIdCheckServlet <------> MemberServiceImpl <---> MemberDAO <-->DB
+      <-------    if(dto!=null)                                MemberDTO
+       가능/불가             
+                
+
+7. 회원가입
+
+               (/MemberAddServlet)      MemberService
+브라우저 -------->MemberAddServlet <------> MemberServiceImpl <---> MemberDAO <-->DB
+                        |                        MemberDTO
+     <--------    LoginUIServlet (로그인 화면)
+                
+     method="post" 했기 때문에 post 방식의 한글처리해야 된다. Filter 사용
+
+8. 로그인 화면보기
+
+브라우저 --------> LoginUIServlet (/LoginUIServlet)
+                    |
+                 loginForm.jsp
+
+
+9. 로그인
+
+               (/LoginServlet)      MemberService
+브라우저 -------->  LoginServlet <------> MemberServiceImpl <---> MemberDAO <-->DB
+                        |                        MemberDTO
+     <--------         메인화면
+
+10. 로그아웃 ( 로그인 이후의 작업이기 때문에 로그인 여부를 확인해야 된다. )
+
+브라우저 --------> LogOutServlet (/LogOutServlet)
+                    |
+      <--------   메인화면
+
+
+11. mypage ( 로그인 이후의 작업이기 때문에 로그인 여부를 확인해야 된다. )
+
+
+                  (/MyPageServlet)      MemberService
+브라우저 -------->  MyPageServlet <------> MemberServiceImpl <---> MemberDAO <-->DB
+                        |                        MemberDTO
+     <--------       mypage.jsp
+
+
+   * 로그인 여부 확인 방법
+                HttpSession session = request.getSession();
+		  MemberDTO dto =
+				  (MemberDTO)session.getAttribute("login");
+		
+		 if(dto!=null) { 
+		    //로그인 한 경우
+		    
+		 }else {
+		   // 로그인 안했거나 했는데 time-out된 경우	 
+			 
+		 }
+
+12. 상품목록 구현
+
+   가. 상품테이블 작성 - goods 테이블
+   나. com.dto.GoodsDTO.java 
+   다. GoodsMapper.xml  ==> 반드시 Configuration.xml 등록
+
+              (/main)               GoodsService
+브라우저 -------->MainServlet <------> GoodsServiceImpl <---> GoodsDAO <-->DB
+                        |                        GoodsDTO
+     <--------    main.jsp
+
+13. 상품 자세히보기
+
+              (/GoodsRetrieveServlet)        GoodsService
+브라우저 -------->GoodsRetrieveServlet <------> GoodsServiceImpl <---> GoodsDAO <-->DB
+                        |                        GoodsDTO
+     <--------    goodsRetrieve.jsp
+
+    * 수량 증가 - jQuery 로 구현
+   
+14. 장바구니 담기
+
+    가. cart 테이블 작성
+    나. CartDTO.java 작성
+    다. CartMapper.xml 추가하고 Configuration.xml 등록
+
+
+             (/CartAddServlet)         CartService
+브라우저 -------->CartAddServlet <------> CartServiceImpl <---> CartDAO <-->DB
+                        |                        CartDTO
+     <--------        main
+
+
+14. 장바구니 목록
+
+              (/CartListServlet)        CartService
+브라우저 -------->CartListServlet <------> CartServiceImpl <---> CartDAO <-->DB
+                        |                        CartDTO
+     <--------    cartList.jsp
