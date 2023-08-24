@@ -145,9 +145,54 @@ ShopMiniMall 프로젝트 아키텍쳐 및 기억해야할 것들 위주로 정�
      <--------        main
 
 
-14. 장바구니 목록
+14-2. 장바구니 목록
 
               (/CartListServlet)        CartService
 브라우저 -------->CartListServlet <------> CartServiceImpl <---> CartDAO <-->DB
                         |                        CartDTO
      <--------    cartList.jsp
+
+15. 장바구니 수량 변경 - ajax
+
+               (/CartUpdateServlet)      CartService
+브라우저 --------> CartUpdateServlet <------> CartServiceImpl <---> CartDAO <-->DB
+      <-------                                   CartDTO
+       
+
+16. 장바구니 단일 삭제
+
+             (/CartDeleteServlet)         CartService
+브라우저 -------->CartDeleteServlet <------> CartServiceImpl <---> CartDAO <-->DB
+                        |                        CartDTO
+     <--------   CartListServlet
+
+17. 장바구니 전체 삭제
+
+             (/CartDeleteAllServlet)         CartService
+브라우저 -------->CartDeleteAllServlet <------> CartServiceImpl <---> CartDAO <-->DB
+                        |                        CartDTO
+     <--------   CartListServlet
+
+
+18. 주문
+
+             (/OrderConfirmServlet)         OrderService
+브라우저 -------->OrderConfirmServlet <------> OrderServiceImpl <---> OrderDAO <-->DB
+                        |                        OrderDTO
+     <--------   orderConfirm.jsp
+
+    
+     가. orderinfo 테이블
+     나. OrderDTO.java
+     다. OrderMapper.xml 추가하고 Configuration.xml 등록
+
+19. 결제
+
+             (/OrderDoneServlet)         OrderService
+브라우저 -------->OrderDoneServlet <------> OrderServiceImpl <---> OrderDAO <-->DB
+                        |                        OrderDTO
+     <--------   orderDone.jsp
+
+   
+   * 결제하면 OrderInfo에 저장(insert)되고 Cart 에서는 삭제(delete)가 되어야 된다. ( 트랜잭션 )
+     
